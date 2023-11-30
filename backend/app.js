@@ -16,3 +16,18 @@ app.get('/', (req, res) => {
     .then(data => res.json(data)) 
 })
 
+app.post('/', (req, res) => { 
+  const { newItem } = req.query;
+  knex('to_dos_table')
+  .select('id')
+  .then(idArray => {
+    const newItemData = {
+      id: idArray.length+1,
+      toDo: newItem,
+    };
+    knex('to_dos_table')
+    .insert(newItemData) 
+    .then(data => res.json(data)) 
+  })
+})
+
