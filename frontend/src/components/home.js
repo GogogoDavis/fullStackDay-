@@ -21,7 +21,33 @@ export const Home = () => {
   const handleInputChange = (e) => {
     setNewItem(e.target.value)
   }
+  const handleUpdateItem = (e) => {
+    
+  }
 
+  const handleDelete = (id) => { 
+    const queryParams = `?id=${id}`
+    fetch(`http://localhost:8080/delete/${queryParams}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
+
+const handleUpdate = () => { 
+  const queryParams = `?updateItem=${updateItem}`
+  fetch(`http://localhost:8080/delete/${queryParams}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+})
+  return ( 
+    <form>
+      <label>
+          <input type="text" value={updateItem} onChange={handleUpdateItem}></input>
+        </label>
+      <button type='submit'>update</button>
+    </form>
+  )
+}
 
   return (
     <>
@@ -29,7 +55,7 @@ export const Home = () => {
         {todo_data ?
         <ol>
           {todo_data.map(item => {
-            return (<li>{item.toDo}</li>)
+            return (<><button onClick={() => handleDelete(item.id)}>X</button><li>{item.toDo}</li><button onClick={() => handleUpdate()}></button></>)
           })}
         </ol>
         : <></>}

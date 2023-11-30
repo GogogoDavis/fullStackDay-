@@ -31,3 +31,24 @@ app.post('/', (req, res) => {
   })
 })
 
+app.delete('/delete/', (req, res) => { 
+    const { id }  = req.query 
+    knex('to_dos_table')
+    .where('id' , id)
+    .del()
+    .then(() => res.json({message: 'da thing be deletey'}))
+
+})
+
+app.patch('/', (req, res) => { 
+    const { id, updatedItem } = req.query
+    knex('to_dos_table')
+    .where('id', id)
+    .update(
+        {
+            id: id,
+            toDo: updatedItem
+        }
+    )
+    .then(() => res.json({message: 'it done be updated'}))
+})
