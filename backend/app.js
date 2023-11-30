@@ -46,8 +46,7 @@ app.patch('/', (req, res) => {
     .where('id', id)
     .update(
         {
-            id: id,
-            toDo: updatedItem
+          toDo: updatedItem
         }
     )
     .then(() => res.json({message: 'it done be updated'}))

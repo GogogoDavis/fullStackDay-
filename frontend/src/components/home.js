@@ -4,12 +4,18 @@ export const Home = () => {
   const [todo_data, setTodo_data] = useState()
   const [newItem, setNewItem] = useState()
   const [updateText, setUpdateText] = useState('');
+  const [refresh, setRefresh] = useState(false)
 
   useEffect(() => {
-    fetch('http://localhost:8080/')
-      .then(res => res.json())
-      .then(data => setTodo_data(data))
+    getTodoData()
   }, [])
+
+  const getTodoData = () => {
+    fetch('http://localhost:8080/')
+    .then(res => res.json())
+    .then(data => data.sort((a, b) => a.id - b.id))
+    .then(sortedData => setTodo_data(sortedData))
+  }
 
   const handleNewItem = (e) => {
     const queryParams = `?newItem=${newItem}`
@@ -29,10 +35,16 @@ export const Home = () => {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
     })
+    .then(res => getTodoData())
   }
 
   const sendUpdate = (id) => {
-    
+    const queryParams = `?id=${id}&updatedItem=${updateText}`
+    fetch(`http://localhost:8080/${queryParams}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+    })
+    .then(res => getTodoData())
   }
 
   const handleUpdate = (id) => {
@@ -49,8 +61,8 @@ export const Home = () => {
         {todo_data ?
         <ol>
           {todo_data.map(item => {
-            return (<>
-              <button onClick={() => handleDelete(item.id)}>X</button>
+            return (<div className="list-container">
+              <button className="x" onClick={() => handleDelete(item.id)}>X</button>
               <li>{item.toDo}</li>
               {item.isEditing ? 
                 <form onSubmit={(e) => {handleUpdate(item.id); sendUpdate(item.id)}}>
@@ -61,16 +73,15 @@ export const Home = () => {
                 </form>
               : 
                 <>
-                  {item.toDo}
                   <button onClick={() => handleUpdate(item.id)}>Edit</button>
                 </>
               }
-            </>)
+            </div>)
           })}
         </ol>
         : <></>}
       </div>
-      <form onSubmit={handleNewItem}>
+      <form className='add-form' onSubmit={handleNewItem}>
         <label>
           <input type="text" value={newItem} onChange={handleInputChange}></input>
         </label>
